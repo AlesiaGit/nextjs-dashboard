@@ -12,7 +12,6 @@ const sql = neon(`${process.env.DATABASE_URL}`)
 async function getUser(email: string): Promise<User | undefined> {
   try {
     const user = await sql`SELECT * FROM users WHERE email=${email}`
-    console.log('user->', user)
     return user[0] as User
   } catch (error) {
     console.error('Failed to fetch user:', error)
@@ -32,6 +31,7 @@ export const { auth, signIn, signOut } = NextAuth({
         if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data
           const user = await getUser(email)
+
           if (!user) return null
 
           const passwordsMatch = await bcrypt.compare(password, user.password)
